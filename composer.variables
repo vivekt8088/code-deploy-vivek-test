@@ -1,0 +1,6 @@
+dev_composer_install="no"
+dev_composer_dump="no"
+test_composer_install="no"
+test_composer_dump="no"
+prod_composer_install="no"
+prod_composer_dump="no"

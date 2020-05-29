@@ -1,0 +1,54 @@
+#!/bin/bash
+source composer_variables
+  if [ "$DEPLOYMENT_GROUP_NAME" == "api-dev.booker-tools-group" ]
+      then
+      rsync -av /opt/deploy/API/app/ /home/apidevbookertool/app/
+      rsync -av /opt/deploy/API/public_html/ /home/apidevbookertool/public_html/
+      aws s3 cp s3://booker-tools-config/.env.dev /home/apidevbookertool/app/.env-dev
+      chown -R apidevbookertool:apidevbookertool /home/apidevbookertool/app
+      chown -R apidevbookertool:apidevbookertool /home/apidevbookertool/public_html
+      if [ "$dev_composer_install" == "yes" ]; then
+      su apidevbookertool ; cd ~ ; composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+      fi
+      if [ "$dev_composer_dump" == "yes" ]; then
+      su apidevbookertool ; cd ~ ; composer dump-autoload
+      fi
+      su apidevbookertool ; cd ~ 
+      php artisan cache:clear
+      php artisan route:clear
+      php artisan config:clear
+      php artisan config:cache
+      
+      sudo su
+      rm -rf /opt/deploy/API/app
+      mkdir /opt/deploy/API/app
+      rm -rf /opt/deploy/API/public_html
+      mkdir /opt/deploy/API/public_html
+  fi
+
+  if [ "$DEPLOYMENT_GROUP_NAME" == "api-test.booker-tools-group" ]
+      then
+      rsync -av /opt/deploy/API/app/ /home/apitestbookertoo/app/
+      rsync -av /opt/deploy/API/public_html/ /home/apitestbookertoo/public_html/
+      aws s3 cp s3://booker-tools-config/.env.test /home/apitestbookertoo/app/.env-test
+      chown -R apitestbookertoo:apitestbookertoo /home/apitestbookertoo/public_html
+      chown -R apitestbookertoo:apitestbookertoo /home/apitestbookertoo/app
+
+      if [ "$test_composer_install" == "yes" ]; then
+      su apitestbookertoo ; cd ~ ; composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+      fi
+      if [ "$test_composer_dump" == "yes" ]; then
+      su apitestbookertoo ; cd ~ ; composer dump-autoload
+      fi
+      su apitestbookertoo ; cd ~ 
+      php artisan cache:clear
+      php artisan route:clear
+      php artisan config:clear
+      php artisan config:cache
+      
+      sudo su
+      rm -rf /opt/deploy/API/app
+      mkdir /opt/deploy/API/app
+      rm -rf /opt/deploy/API/public_html
+      mkdir /opt/deploy/API/public_html
+  fi

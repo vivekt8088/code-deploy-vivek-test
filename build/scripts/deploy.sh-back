@@ -1,0 +1,25 @@
+#!/bin/bash
+# Set ownership for all folders
+  if [ "$DEPLOYMENT_GROUP_NAME" == "api-dev.booker-tools-group" ]
+      then
+      rsync -av /opt/deploy/API/app/ /home/apidevbookertool/app/
+      rsync -av /opt/deploy/API/public_html/ /home/apidevbookertool/public_html/
+      chown -R apidevbookertool:apidevbookertool /home/apidevbookertool/app
+      chown -R apidevbookertool:apidevbookertool /home/apidevbookertool/public_html
+      rm -rf /opt/deploy/API/app
+      mkdir /opt/deploy/API/app
+      rm -rf /opt/deploy/API/public_html/*
+      mkdir /opt/deploy/API/public_html
+  fi
+      
+  if [ "$DEPLOYMENT_GROUP_NAME" == "api-test.booker-tools-group" ]
+      then
+      rsync -av /opt/deploy/API/app/ /home/apitestbookertoo/app/ 
+      rsync -av /opt/deploy/API/public_html/ /home/apitestbookertoo/public_html/
+      chown -R apitestbookertoo:apitestbookertoo /home/apitestbookertoo/public_html
+      chown -R apitestbookertoo:apitestbookertoo /home/apitestbookertoo/app
+      rm -rf /opt/deploy/API/app
+      mkdir /opt/deploy/API/app
+      rm -rf /opt/deploy/API/public_html
+      mkdir /opt/deploy/API/public_html
+  fi
